@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">GithubFinalProject</string>
-    <string name="error_msg">Что-то пошло не так</string>
-    <string name="query_hint">Найти</string>
-    <string name="search">Поиск</string>
-    <string name="empty_text">Введите что-нибудь</string>
+    <string name="app_name" translatable="false">GithubFinalProject</string>
+    <string name="error_msg">Something goes wrong</string>
+    <string name="query_hint">Search</string>
+    <string name="search">Find</string>
+    <string name="empty_text">Enter something</string>
+    <string name="updated_hint">Updated:</string>
+    <string name="created_hint">Created:</string>
+    <string name="language_hint">Language:</string>
 </resources>
