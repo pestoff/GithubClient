@@ -18,8 +18,22 @@ import dev.colibri.githubclienttest.network.JsonParser;
 
 public class HttpClient {
     private static final String REPOSITORY_SEARCH_URL = "https://api.github.com/search/repositories";
+    private static final String REPOS_URL = "https://api.github.com/repos";
     private static final String QUERY_PARAM = "q";
     private final JsonParser jsonParser = new JsonParser();
+
+
+    public Repository getRepository(String repoName, String userLogin) throws IOException, JSONException {
+        String requestUrl = Uri.parse(REPOS_URL)
+                               .buildUpon()
+                               .appendPath(userLogin)
+                               .appendPath(repoName)
+                               .build()
+                               .toString();
+        String response = getResponse(requestUrl);
+
+        return jsonParser.getRepository(response);
+    }
 
     public ArrayList<Repository> getRepositories(String query) throws IOException, JSONException {
         String requestUrl = Uri.parse(REPOSITORY_SEARCH_URL)
