@@ -1,14 +1,14 @@
-package dev.colibri.githubclienttest;
+package dev.colibri.githubclienttest.activity;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -34,14 +34,30 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        RecyclerView recyclerView = findViewById(R.id.repository_recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        repositoryAdapter = new RepositoryAdapter();
-        recyclerView.setAdapter(repositoryAdapter);
+        initRecyclerView();
+
         queryEditText = findViewById(R.id.query_edit_text);
         progressBar = findViewById(R.id.progress_bar);
 
         httpClient = new HttpClient();
+    }
+
+    private void initRecyclerView() {
+        RecyclerView recyclerView = findViewById(R.id.repository_recycler_view);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        RepositoryAdapter.OnRepoClickListener listener = new RepositoryAdapter.OnRepoClickListener() {
+            @Override
+            public void onRepoClick(Repository repository) {
+                Intent intent = new Intent(MainActivity.this, RepoDetailsActivity.class);
+                intent.putExtra(RepoDetailsActivity.EXTRA_REPO_NAME, repository.getName());
+                String userLogin = repository.getOwner().getLogin();
+                intent.putExtra(RepoDetailsActivity.EXTRA_USER_LOGIN, userLogin);
+                startActivity(intent);
+            }
+        };
+        repositoryAdapter = new RepositoryAdapter(listener);
+        recyclerView.setAdapter(repositoryAdapter);
     }
 
     public void searchRepositories(View v) {
