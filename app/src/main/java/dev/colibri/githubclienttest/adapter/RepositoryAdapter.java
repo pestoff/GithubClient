@@ -46,6 +46,11 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RepositoryAdapter.Re
         notifyDataSetChanged();
     }
 
+    public void clearItems() {
+        repositories.clear();
+        notifyDataSetChanged();
+    }
+
     class RepositoryViewHolder extends RecyclerView.ViewHolder {
         private TextView nameTextView;
         private TextView descriptionTextView;
@@ -64,7 +69,10 @@ public class RepositoryAdapter extends RecyclerView.Adapter<RepositoryAdapter.Re
             descriptionTextView.setText(repository.getDescription());
 
             String avatarUrl = repository.getOwner().getAvatarUrl();
-            Picasso.get().load(avatarUrl).into(ownerImageView);
+            Picasso.get()
+                   .load(avatarUrl)
+                   .placeholder(R.drawable.ic_person_black_24dp)
+                   .into(ownerImageView);
         }
     }
 

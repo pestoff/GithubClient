@@ -9,6 +9,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -23,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
 
     private HttpClient httpClient;
     private RepositoryAdapter repositoryAdapter;
+    private EditText queryEditText;
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,12 +38,28 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         repositoryAdapter = new RepositoryAdapter();
         recyclerView.setAdapter(repositoryAdapter);
+        queryEditText = findViewById(R.id.query_edit_text);
+        progressBar = findViewById(R.id.progress_bar);
 
         httpClient = new HttpClient();
-        new GetRepositoriesAsyncTask().execute("android");
+    }
+
+    public void searchRepositories(View v) {
+        String query = queryEditText.getText().toString();
+        if(query.isEmpty()) {
+            Toast.makeText(this, R.string.empty_text, Toast.LENGTH_SHORT).show();
+        } else {
+            repositoryAdapter.clearItems();
+            new GetRepositoriesAsyncTask().execute(query);
+        }
     }
 
     private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
+
+        @Override
+        protected void onPreExecute() {
+            progressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected ArrayList<Repository> doInBackground(String... queries) {
@@ -53,6 +74,8 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(ArrayList<Repository> result) {
+            progressBar.setVisibility(View.GONE);
+
             if(result != null) {
                 repositoryAdapter.addItems(result);
             } else {
