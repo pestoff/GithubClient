@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 return httpClient.getRepositories(queries[0]);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }

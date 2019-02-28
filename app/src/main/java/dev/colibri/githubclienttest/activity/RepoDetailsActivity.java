@@ -104,7 +104,7 @@ public class RepoDetailsActivity extends AppCompatActivity {
             String userLogin = params[1];
             try {
                 return httpClient.getRepository(repoName, userLogin);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }
