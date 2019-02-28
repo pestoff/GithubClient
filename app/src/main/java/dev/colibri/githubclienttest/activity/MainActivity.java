@@ -1,5 +1,6 @@
 package dev.colibri.githubclienttest.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -7,7 +8,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -68,5 +68,12 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void navigateToDetailsScreen(String name, String login) {
+        Intent intent = new Intent(this, RepoDetailsActivity.class);
+        intent.putExtra(RepoDetailsActivity.EXTRA_REPO_NAME, name);
+        intent.putExtra(RepoDetailsActivity.EXTRA_USER_LOGIN, login);
+        startActivity(intent);
     }
 }

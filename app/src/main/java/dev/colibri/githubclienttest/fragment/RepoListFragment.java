@@ -3,6 +3,7 @@ package dev.colibri.githubclienttest.fragment;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,6 +18,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import dev.colibri.githubclienttest.R;
+import dev.colibri.githubclienttest.activity.MainActivity;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
@@ -27,6 +29,18 @@ public class RepoListFragment extends Fragment {
     private HttpClient httpClient;
     private RepositoryAdapter repositoryAdapter;
     private ProgressBar progressBar;
+
+    private MainActivity mainActivity;
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof MainActivity) {
+            mainActivity = ((MainActivity) context);
+        }
+        else {
+            throw new RuntimeException("Activity must implement NavigationActivity interface!");
+        }
+    }
 
     @Nullable
     @Override
@@ -45,7 +59,7 @@ public class RepoListFragment extends Fragment {
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         RepositoryAdapter.OnRepoClickListener listener = (repository) -> {
-                // TODO: add action
+            mainActivity.navigateToDetailsScreen(repository.getName(), repository.getOwner().getLogin());
         };
         repositoryAdapter = new RepositoryAdapter(listener);
         recyclerView.setAdapter(repositoryAdapter);
