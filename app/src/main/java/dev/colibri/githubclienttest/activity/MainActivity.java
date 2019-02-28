@@ -41,16 +41,13 @@ public class MainActivity extends AppCompatActivity {
         final ImageView searchImageView = findViewById(R.id.search_button);
         final EditText searchEditText = findViewById(R.id.query_edit_text);
 
-        searchImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.master_fragment_container);
-                final RepoListFragment repoListFragment = (RepoListFragment) fragment;
-                if(repoListFragment == null) throw new NullPointerException("Fragment can't be null");
+        searchImageView.setOnClickListener(v -> {
+            Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.master_fragment_container);
+            final RepoListFragment repoListFragment = (RepoListFragment) fragment;
+            if(repoListFragment == null) throw new NullPointerException("Fragment can't be null");
 
-                String query = searchEditText.getText().toString();
-                repoListFragment.onSearchQueryChanged(query);
-            }
+            String query = searchEditText.getText().toString();
+            repoListFragment.onSearchQueryChanged(query);
         });
     }
 
@@ -65,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.settings:
-                Toast.makeText(this, "TODO: add settings screen", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.settings_clicked_hint, Toast.LENGTH_SHORT).show();
                 return true;
 
             default:
