@@ -1,9 +1,12 @@
 package dev.colibri.githubclienttest.entity;
+import com.google.gson.annotations.SerializedName;
 
 public class Owner {
 
     private String login;
     private int id;
+
+    @SerializedName("avatar_url")
     private String avatarUrl;
 
     public Owner(String login, int id, String avatarUrl) {

@@ -1,57 +1,27 @@
 package dev.colibri.githubclienttest.network;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 
-import dev.colibri.githubclienttest.entity.Owner;
 import dev.colibri.githubclienttest.entity.Repository;
 
 public class JsonParser {
+    private static final Gson GSON = new Gson();
 
-    public ArrayList<Repository> getRepositories(String jsonString) throws JSONException {
-        JSONObject json = new JSONObject(jsonString);
-
-        JSONArray items = json.getJSONArray("items");
-        ArrayList<Repository> result = new ArrayList<>();
-
-        for (int i = 0; i < items.length(); i++) {
-            JSONObject repositoryJson = items.getJSONObject(i);
-
-            Repository repository = getRepository(repositoryJson);
-
-            result.add(repository);
-        }
-
+    public ArrayList<Repository> getRepositories(String jsonString) {
+        JsonObject jsonObject = GSON.fromJson(jsonString, JsonObject.class);
+        JsonElement items = jsonObject.get("items");
+        Type repositoriesType = new TypeToken<ArrayList<Repository>>(){}.getType();
+        ArrayList<Repository> result = GSON.fromJson(items, repositoriesType);
         return result;
     }
 
-    public Repository getRepository(String jsonString) throws JSONException {
-        JSONObject jsonObject = new JSONObject(jsonString);
-
-        return getRepository(jsonObject);
-    }
-
-    private Repository getRepository(JSONObject repositoryJson) throws JSONException {
-        int id = repositoryJson.getInt("id");
-        String name = repositoryJson.getString("name");
-        String description = repositoryJson.getString("description");
-        String createdAt = repositoryJson.getString("created_at");
-        String updatedAt = repositoryJson.getString("updated_at");
-        int starsCount = repositoryJson.getInt("stargazers_count");
-        int forksCount = repositoryJson.getInt("forks_count");
-        String language = repositoryJson.getString("language");
-
-        JSONObject ownerJson = repositoryJson.getJSONObject("owner");
-        String login = ownerJson.getString("login");
-        String avatarUrl = ownerJson.getString("avatar_url");
-        int ownerId = ownerJson.getInt("id");
-
-        Owner owner = new Owner(login, ownerId, avatarUrl);
-        return new Repository(id, name, description,
-                              createdAt, updatedAt,starsCount,
-                              language, forksCount, owner);
+    public Repository getRepository(String jsonString) {
+        return GSON.fromJson(jsonString, Repository.class);
     }
 }

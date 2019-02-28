@@ -1,16 +1,24 @@
 package dev.colibri.githubclienttest.entity;
+import com.google.gson.annotations.SerializedName;
 
 public class Repository {
-
     private int id;
     private String name;
     private String description;
-    private String createdAt;
-    private String updatedAt;
-    private int stargazersCount;
     private String language;
-    private int forksCount;
     private Owner owner;
+
+    @SerializedName("created_at")
+    private String createdAt;
+
+    @SerializedName("updated_at")
+    private String updatedAt;
+
+    @SerializedName("stargazers_count")
+    private int stargazersCount;
+
+    @SerializedName("forks_count")
+    private int forksCount;
 
     public Repository(int id,
                       String name,
