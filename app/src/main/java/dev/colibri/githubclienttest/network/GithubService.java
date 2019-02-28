@@ -1,6 +1,6 @@
 package dev.colibri.githubclienttest.network;
 
-import dev.colibri.githubclienttest.entity.ApiItemsResponse;
+import dev.colibri.githubclienttest.entity.RepositoriesResponse;
 import dev.colibri.githubclienttest.entity.Repository;
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -12,7 +12,7 @@ public interface GithubService {
     String BASE_URL = "https://api.github.com";
 
     @GET("search/repositories")
-    Call<ApiItemsResponse<Repository>> searchRepos(@Query("q") String searchQuery);
+    Call<RepositoriesResponse> searchRepos(@Query("q") String searchQuery);
 
     @GET("repos/{user}/{repo}")
     Call<Repository> getRepo(@Path("user") String user, @Path("repo") String repo);

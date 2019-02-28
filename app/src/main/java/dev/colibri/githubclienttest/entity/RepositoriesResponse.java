@@ -4,14 +4,15 @@ import java.util.ArrayList;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ApiItemsResponse<T> {
+public class RepositoriesResponse {
     @SerializedName("total_count")
     private Long totalCount;
 
     @SerializedName("incomplete_results")
     private Boolean incompleteResults;
 
-    private ArrayList<T> items;
+    @SerializedName("items")
+    private ArrayList<Repository> repositories;
 
 
     public Long getTotalCount() {
@@ -22,8 +23,8 @@ public class ApiItemsResponse<T> {
         return incompleteResults;
     }
 
-    public ArrayList<T> getItems() {
-        return items;
+    public ArrayList<Repository> getRepositories() {
+        return repositories;
     }
 
     @Override
@@ -31,18 +32,20 @@ public class ApiItemsResponse<T> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        final ApiItemsResponse<?> that = (ApiItemsResponse<?>) o;
+        final RepositoriesResponse that = (RepositoriesResponse) o;
 
         if (totalCount != null ? !totalCount.equals(that.totalCount) : that.totalCount != null) return false;
-        if (incompleteResults != null ? !incompleteResults.equals(that.incompleteResults) : that.incompleteResults != null) return false;
-        return items != null ? items.equals(that.items) : that.items == null;
+        if (incompleteResults != null ? !incompleteResults.equals(that.incompleteResults)
+                                      : that.incompleteResults != null)
+            return false;
+        return repositories != null ? repositories.equals(that.repositories) : that.repositories == null;
     }
 
     @Override
     public int hashCode() {
         int result = totalCount != null ? totalCount.hashCode() : 0;
         result = 31 * result + (incompleteResults != null ? incompleteResults.hashCode() : 0);
-        result = 31 * result + (items != null ? items.hashCode() : 0);
+        result = 31 * result + (repositories != null ? repositories.hashCode() : 0);
         return result;
     }
 }

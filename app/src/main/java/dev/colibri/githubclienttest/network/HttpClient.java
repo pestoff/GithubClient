@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-import dev.colibri.githubclienttest.entity.ApiItemsResponse;
+import dev.colibri.githubclienttest.entity.RepositoriesResponse;
 import dev.colibri.githubclienttest.entity.Repository;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -24,8 +24,8 @@ public class HttpClient {
     }
 
     public ArrayList<Repository> getRepositories(String query) throws IOException {
-        ApiItemsResponse<Repository> response = getResponse(githubService.searchRepos(query));
-        return response.getItems();
+        RepositoriesResponse response = getResponse(githubService.searchRepos(query));
+        return response.getRepositories();
     }
 
     private <T> T getResponse(Call<T> call) throws IOException {
