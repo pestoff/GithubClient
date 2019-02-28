@@ -38,7 +38,7 @@ public class RepoListFragment extends Fragment {
             mainActivity = ((MainActivity) context);
         }
         else {
-            throw new RuntimeException("Activity must implement NavigationActivity interface!");
+            throw new RuntimeException("Can't cast context to MainActivity!");
         }
     }
 
