@@ -3,60 +3,38 @@ package dev.colibri.githubclienttest.network;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import android.net.Uri;
-import android.support.annotation.NonNull;
 
+import dev.colibri.githubclienttest.entity.ApiItemsResponse;
 import dev.colibri.githubclienttest.entity.Repository;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
+import retrofit2.Call;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpClient {
-    private static final String REPOSITORY_SEARCH_URL = "https://api.github.com/search/repositories";
-    private static final String REPOS_URL = "https://api.github.com/repos";
-    private static final String QUERY_PARAM = "q";
-    private final JsonParser jsonParser = new JsonParser();
-
-    private OkHttpClient client = new OkHttpClient.Builder()
+    private final Retrofit retrofit = new Retrofit.Builder()
+            .baseUrl(GithubService.BASE_URL)
+            .addConverterFactory(GsonConverterFactory.create())
             .build();
 
+    private final GithubService githubService = retrofit.create(GithubService.class);
 
     public Repository getRepository(String repoName, String userLogin) throws IOException {
-        String requestUrl = Uri.parse(REPOS_URL)
-                               .buildUpon()
-                               .appendPath(userLogin)
-                               .appendPath(repoName)
-                               .build()
-                               .toString();
-        String response = getResponse(requestUrl);
-
-        return jsonParser.getRepository(response);
+        return getResponse(githubService.getRepo(userLogin, repoName));
     }
 
     public ArrayList<Repository> getRepositories(String query) throws IOException {
-        String requestUrl = Uri.parse(REPOSITORY_SEARCH_URL)
-                               .buildUpon()
-                               .appendQueryParameter(QUERY_PARAM, query)
-                               .build()
-                               .toString();
-
-        String response = getResponse(requestUrl);
-        return jsonParser.getRepositories(response);
+        ApiItemsResponse<Repository> response = getResponse(githubService.searchRepos(query));
+        return response.getItems();
     }
 
-    @NonNull
-    private String getResponse(String requestUrl) throws IOException {
-        Request request = new Request.Builder()
-                .url(requestUrl)
-                .build();
-
-
-        Response responseRaw = client.newCall(request).execute();
-        if(responseRaw.isSuccessful()) {
-            String response = responseRaw.body().string();
-            return response;
-        } else {
-            throw new IOException("Response is not successful");
+    private <T> T getResponse(Call<T> call) throws IOException {
+        Response<T> response = call.execute();
+        if(response.isSuccessful()) {
+            return response.body();
+        }
+        else {
+            throw new IOException("Неуспешный статус ответа " + response);
         }
     }
 }
