@@ -9,6 +9,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -28,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private RepositoryAdapter repositoryAdapter;
     private EditText queryEditText;
     private ProgressBar progressBar;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
 
         queryEditText = findViewById(R.id.query_edit_text);
         progressBar = findViewById(R.id.progress_bar);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         httpClient = new HttpClient();
     }
@@ -67,6 +74,25 @@ public class MainActivity extends AppCompatActivity {
         } else {
             repositoryAdapter.clearItems();
             new GetRepositoriesAsyncTask().execute(query);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.settings:
+                Toast.makeText(this, R.string.settings_clicked_hint, Toast.LENGTH_SHORT).show();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
