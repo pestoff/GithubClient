@@ -19,16 +19,17 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.entity.Repository;
-import dev.colibri.githubclienttest.network.HttpClient;
+import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoDetailsFragment extends Fragment {
     public static final String EXTRA_REPO_NAME = "repoName";
     public static final String EXTRA_USER_LOGIN = "userLogin";
     private static final String LOG_TAG = "dc.RepoDetailsActivity";
 
-    private HttpClient httpClient;
+    private DataRepository dataRepository;
 
     private ImageView ownerImageView;
     private TextView nameTextView;
@@ -61,7 +62,7 @@ public class RepoDetailsFragment extends Fragment {
 
         initView(view);
 
-        httpClient = new HttpClient();
+        dataRepository = App.getDataRepository();
 
         Bundle args = getArguments();
         if(args != null) {
@@ -126,7 +127,7 @@ public class RepoDetailsFragment extends Fragment {
             String repoName = params[0];
             String userLogin = params[1];
             try {
-                return httpClient.getRepository(repoName, userLogin);
+                return dataRepository.getRepository(repoName, userLogin);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

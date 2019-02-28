@@ -19,10 +19,6 @@ public class HttpClient {
 
     private final GithubService githubService = retrofit.create(GithubService.class);
 
-    public Repository getRepository(String repoName, String userLogin) throws IOException {
-        return getResponse(githubService.getRepo(userLogin, repoName));
-    }
-
     public ArrayList<Repository> getRepositories(String query) throws IOException {
         RepositoriesResponse response = getResponse(githubService.searchRepos(query));
         return response.getRepositories();

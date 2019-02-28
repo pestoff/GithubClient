@@ -17,16 +17,17 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.activity.MainActivity;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
 import dev.colibri.githubclienttest.entity.Repository;
-import dev.colibri.githubclienttest.network.HttpClient;
+import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoListFragment extends Fragment {
     public static final String TAG = "RepoListFragment";
 
-    private HttpClient httpClient;
+    private DataRepository dataRepository;
     private RepositoryAdapter repositoryAdapter;
     private ProgressBar progressBar;
 
@@ -50,7 +51,7 @@ public class RepoListFragment extends Fragment {
         initRecyclerView(view);
 
         progressBar = view.findViewById(R.id.progress_bar);
-        httpClient = new HttpClient();
+        dataRepository = App.getDataRepository();
         return view;
     }
 
@@ -85,7 +86,7 @@ public class RepoListFragment extends Fragment {
         protected ArrayList<Repository> doInBackground(String... queries) {
 
             try {
-                return httpClient.getRepositories(queries[0]);
+                return dataRepository.getRepositories(queries[0]);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
