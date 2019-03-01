@@ -9,7 +9,6 @@ import javax.inject.Singleton;
 import dev.colibri.githubclienttest.db.RepositoryDao;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
-import retrofit2.http.HEAD;
 
 @Singleton
 public class DataRepository {
@@ -24,7 +23,7 @@ public class DataRepository {
 
     public Repository getRepository(String repoName, String userLogin) throws IOException {
         Repository repository = repositoryDao.getRepository(repoName, userLogin);
-        if (repository == null) throw new IOException("Can't find repository entity in repositoryDao");
+        if (repository == null) throw new IOException("Can't find repository entity in db");
 
         return repository;
     }
@@ -40,7 +39,7 @@ public class DataRepository {
             repositories = repositoryDao.getRepositories(dbWildCardQuery);
         }
 
-        if(repositories == null) throw new IOException("Can't find repositories entities in repositoryDao or api");
+        if(repositories == null) throw new IOException("Can't find repositories entities in db or api");
 
         return repositories;
     }
