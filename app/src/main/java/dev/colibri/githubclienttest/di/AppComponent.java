@@ -7,7 +7,7 @@ import dev.colibri.githubclienttest.fragment.RepoDetailsFragment;
 import dev.colibri.githubclienttest.fragment.RepoListFragment;
 
 @Singleton
-@Component(modules = ViewModelModule.class)
+@Component(modules = {ViewModelModule.class, AppModule.class})
 public interface AppComponent {
 
     void inject(RepoListFragment repoListFragment);
