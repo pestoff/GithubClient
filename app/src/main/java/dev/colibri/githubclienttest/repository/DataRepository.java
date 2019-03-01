@@ -2,6 +2,7 @@ package dev.colibri.githubclienttest.repository;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +29,7 @@ public class DataRepository {
         return repository;
     }
 
-    public ArrayList<Repository> getRepositories(String query) throws IOException {
+    public List<Repository> getRepositories(String query) throws IOException {
         ArrayList<Repository> repositories = null;
         try {
 

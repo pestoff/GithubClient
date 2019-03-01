@@ -1,5 +1,8 @@
 package dev.colibri.githubclienttest.di;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 import javax.inject.Singleton;
 
 import android.arch.persistence.room.Room;
@@ -56,6 +59,13 @@ public class AppModule {
     public GithubService providesGithubService(Retrofit retrofit) {
         return retrofit.create(GithubService.class);
 
+    }
+
+    @Provides
+    @Singleton
+    Executor providesExecutor() {
+        int numberOfCores = Runtime.getRuntime().availableProcessors();
+        return Executors.newFixedThreadPool(numberOfCores);
     }
 
 }

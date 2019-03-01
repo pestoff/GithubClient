@@ -1,101 +1,72 @@
 package dev.colibri.githubclienttest.viewmodel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.os.AsyncTask;
 
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoListViewModel extends ViewModel {
     private DataRepository dataRepository;
+    private Executor executor;
 
-    private MutableLiveData<List<Repository>> repositories;
-    private MutableLiveData<Boolean> isNetworkException;
-    private MutableLiveData<Boolean> isQueryValidationException;
-    private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<List<Repository>> repositories = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isQueryValidationException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     @Inject
-    public RepoListViewModel(DataRepository dataRepository) {
+    public RepoListViewModel(DataRepository dataRepository, Executor executor) {
         this.dataRepository = dataRepository;
+        this.executor = executor;
     }
 
-    public LiveData<List<Repository>> geRepositories() {
-        if (repositories == null) {
-            repositories = new MutableLiveData<>();
-        }
+    public LiveData<List<Repository>> getRepositories() {
         return repositories;
     }
 
 
     public LiveData<Boolean> isNetworkException() {
-        if(isNetworkException == null) {
-            isNetworkException = new MutableLiveData<>();
-        }
         return isNetworkException;
     }
 
     public LiveData<Boolean> isQueryValidationException() {
-        if(isQueryValidationException == null) {
-            isQueryValidationException = new MutableLiveData<>();
-        }
         return isQueryValidationException;
     }
 
     public LiveData<Boolean> isLoading() {
-        if(isLoading == null) {
-            isLoading = new MutableLiveData<>();
-        }
         return isLoading;
     }
 
     public void searchRepositories(String query) {
         if(query.isEmpty()) {
-            // don't want value to be saved after screen rotation
             isQueryValidationException.setValue(true);
-            isQueryValidationException.setValue(false);
         } else {
-            new GetRepositoriesAsyncTask().execute(query);
+            requestRepositories(query);
         }
     }
 
-    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
-
-        @Override
-        protected void onPreExecute() {
-            isLoading.setValue(true);
-        }
-
-        @Override
-        protected ArrayList<Repository> doInBackground(String... queries) {
-
+    private void requestRepositories(String query) {
+        isLoading.setValue(true);
+        executor.execute(() -> {
             try {
-                return dataRepository.getRepositories(queries[0]);
+                List<Repository> result = dataRepository.getRepositories(query);
+                repositories.postValue(result);
+
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
+                isNetworkException.postValue(true);
+            } finally {
+                isLoading.postValue(false);
             }
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Repository> result) {
-            isLoading.setValue(false);
-
-            if(result != null) {
-                repositories.setValue(result);
-            } else {
-                // don't want value to be saved after screen rotation
-                isNetworkException.setValue(true);
-                isNetworkException.setValue(false);
-            }
-        }
+        });
     }
 
 }
