@@ -1,11 +1,10 @@
 package dev.colibri.githubclienttest.fragment;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import android.os.AsyncTask;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,22 +13,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.entity.Repository;
-import dev.colibri.githubclienttest.repository.DataRepository;
+import dev.colibri.githubclienttest.viewmodel.RepoDetailsViewModel;
 
 public class RepoDetailsFragment extends Fragment {
     public static final String EXTRA_REPO_NAME = "repoName";
     public static final String EXTRA_USER_LOGIN = "userLogin";
     private static final String LOG_TAG = "dc.RepoDetailsActivity";
-
-    private DataRepository dataRepository;
 
     private ImageView ownerImageView;
     private TextView nameTextView;
@@ -39,6 +36,9 @@ public class RepoDetailsFragment extends Fragment {
     private TextView createdTextView;
     private TextView updatedTextView;
     private TextView languageTextView;
+    private ProgressBar progressBar;
+
+    private RepoDetailsViewModel viewModel;
 
     public static RepoDetailsFragment newInstance(String repoName, String userLogin) {
 
@@ -61,8 +61,7 @@ public class RepoDetailsFragment extends Fragment {
 
 
         initView(view);
-
-        dataRepository = App.getDataRepository();
+        initViewModel();
 
         Bundle args = getArguments();
         if(args != null) {
@@ -74,6 +73,27 @@ public class RepoDetailsFragment extends Fragment {
         return view;
     }
 
+    private void initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(RepoDetailsViewModel.class);
+        viewModel.getRepository().observe(this, (repository -> {
+            if(repository != null) {
+                display(repository);
+            }
+        }));
+
+        viewModel.isException().observe(this, (isException) -> {
+            if(isException != null && isException) {
+                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        viewModel.isLoading().observe(this, (isLoading) -> {
+            if(isLoading != null) {
+                progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
     private void initView(View view) {
         ownerImageView = view.findViewById(R.id.owner_image_view);
         nameTextView = view.findViewById(R.id.name_text_view);
@@ -83,6 +103,7 @@ public class RepoDetailsFragment extends Fragment {
         createdTextView = view.findViewById(R.id.created_text_view);
         updatedTextView = view.findViewById(R.id.updated_text_view);
         languageTextView = view.findViewById(R.id.language_text_view);
+        progressBar = view.findViewById(R.id.progress_bar);
     }
 
     void display(Repository repository) {
@@ -117,30 +138,7 @@ public class RepoDetailsFragment extends Fragment {
     }
 
     public void updateContent(String repoName, String userLogin) {
-        new GetRepositoryAsyncTask().execute(repoName, userLogin);
+        viewModel.updateContent(repoName, userLogin);
     }
 
-    private class GetRepositoryAsyncTask extends AsyncTask<String, Void, Repository> {
-
-        @Override
-        protected Repository doInBackground(String... params) {
-            String repoName = params[0];
-            String userLogin = params[1];
-            try {
-                return dataRepository.getRepository(repoName, userLogin);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Repository repository) {
-            if(repository != null) {
-                display(repository);
-            } else {
-                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 }
