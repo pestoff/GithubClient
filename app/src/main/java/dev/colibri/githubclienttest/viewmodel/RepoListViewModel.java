@@ -16,52 +16,38 @@ import dev.colibri.githubclienttest.repository.DataRepository;
 public class RepoListViewModel extends ViewModel {
     private DataRepository dataRepository = App.getDataRepository();
 
-    private MutableLiveData<List<Repository>> repositories;
-    private MutableLiveData<Boolean> isNetworkException;
-    private MutableLiveData<Boolean> isQueryValidationException;
-    private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<List<Repository>> repositories = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isQueryValidationException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
 
     public LiveData<List<Repository>> geRepositories() {
-        if (repositories == null) {
-            repositories = new MutableLiveData<>();
-        }
         return repositories;
     }
 
 
     public LiveData<Boolean> isNetworkException() {
-        if(isNetworkException == null) {
-            isNetworkException = new MutableLiveData<>();
-        }
         return isNetworkException;
     }
 
     public LiveData<Boolean> isQueryValidationException() {
-        if(isQueryValidationException == null) {
-            isQueryValidationException = new MutableLiveData<>();
-        }
         return isQueryValidationException;
     }
 
     public LiveData<Boolean> isLoading() {
-        if(isLoading == null) {
-            isLoading = new MutableLiveData<>();
-        }
         return isLoading;
     }
 
     public void searchRepositories(String query) {
         if(query.isEmpty()) {
-            // don't want value to be saved after screen rotation
             isQueryValidationException.setValue(true);
-            isQueryValidationException.setValue(false);
         } else {
             new GetRepositoriesAsyncTask().execute(query);
         }
     }
 
-    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
+    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
 
         @Override
         protected void onPreExecute() {
@@ -69,7 +55,7 @@ public class RepoListViewModel extends ViewModel {
         }
 
         @Override
-        protected ArrayList<Repository> doInBackground(String... queries) {
+        protected List<Repository> doInBackground(String... queries) {
 
             try {
                 return dataRepository.getRepositories(queries[0]);
@@ -80,15 +66,13 @@ public class RepoListViewModel extends ViewModel {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Repository> result) {
+        protected void onPostExecute(List<Repository> result) {
             isLoading.setValue(false);
 
             if(result != null) {
                 repositories.setValue(result);
             } else {
-                // don't want value to be saved after screen rotation
                 isNetworkException.setValue(true);
-                isNetworkException.setValue(false);
             }
         }
     }
