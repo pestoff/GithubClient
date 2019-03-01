@@ -1,10 +1,8 @@
 package dev.colibri.githubclienttest.viewmodel;
 
 
-import static dev.colibri.githubclienttest.viewmodel.RepoListViewModelTest.REPOSITORY;
-import static dev.colibri.githubclienttest.viewmodel.RepoListViewModelTest.TEST_EXECUTOR;
-
 import java.io.IOException;
+import java.util.concurrent.Executor;
 
 import android.arch.core.executor.testing.InstantTaskExecutorRule;
 
@@ -17,10 +15,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import dev.colibri.githubclienttest.Constants;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoDetailsViewModelTest {
+    private static final Repository REPOSITORY = Constants.REPOSITORY;
+    private static final Executor TEST_EXECUTOR = Constants.TEST_EXECUTOR;
+
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
 

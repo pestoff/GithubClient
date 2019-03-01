@@ -1,8 +1,5 @@
 package dev.colibri.githubclienttest.repository;
 
-import static dev.colibri.githubclienttest.viewmodel.RepoListViewModelTest.REPOSITORIES;
-import static dev.colibri.githubclienttest.viewmodel.RepoListViewModelTest.REPOSITORY;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -13,11 +10,15 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import dev.colibri.githubclienttest.Constants;
 import dev.colibri.githubclienttest.db.RepositoryDao;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
 
 public class DataRepositoryTest {
+    private static final Repository REPOSITORY = Constants.REPOSITORY;
+    private static final List<Repository> REPOSITORIES = Constants.REPOSITORIES;
+
     @Mock
     private HttpClient httpClient;
 

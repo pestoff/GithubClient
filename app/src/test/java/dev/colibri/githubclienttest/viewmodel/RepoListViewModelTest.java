@@ -2,7 +2,6 @@ package dev.colibri.githubclienttest.viewmodel;
 
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -17,28 +16,16 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
-import dev.colibri.githubclienttest.entity.Owner;
+import dev.colibri.githubclienttest.Constants;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoListViewModelTest {
+    private static final List<Repository> REPOSITORIES = Constants.REPOSITORIES;
+    private static final Executor TEST_EXECUTOR = Constants.TEST_EXECUTOR;
+
     @Rule
     public TestRule rule = new InstantTaskExecutorRule();
-
-    public static final  Repository REPOSITORY = new Repository(
-            1,
-            "name",
-            "description",
-            "2019-01-01T04:02:57Z",
-            "2018-11-05T04:02:57Z",
-            100,
-            "en",
-            100,
-            new Owner("login", 1, "https://sample/sample.png")
-    );
-
-    public static final List<Repository> REPOSITORIES = Collections.singletonList(REPOSITORY);
-    public static Executor TEST_EXECUTOR = command -> command.run();
 
     @Mock
     private DataRepository dataRepository;
