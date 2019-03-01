@@ -9,6 +9,7 @@ import javax.inject.Singleton;
 import dev.colibri.githubclienttest.db.RepositoryDao;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
+import retrofit2.http.HEAD;
 
 @Singleton
 public class DataRepository {

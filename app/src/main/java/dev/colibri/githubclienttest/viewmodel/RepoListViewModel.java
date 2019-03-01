@@ -42,6 +42,9 @@ public class RepoListViewModel extends ViewModel {
     }
 
     public LiveData<Boolean> isLoading() {
+        if(isLoading == null) {
+            isLoading = new MutableLiveData<>();
+        }
         return isLoading;
     }
 
