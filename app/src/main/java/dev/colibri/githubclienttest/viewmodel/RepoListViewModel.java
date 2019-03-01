@@ -4,23 +4,28 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
 
-import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoListViewModel extends ViewModel {
-    private DataRepository dataRepository = App.getDataRepository();
+    private DataRepository dataRepository;
 
     private MutableLiveData<List<Repository>> repositories;
     private MutableLiveData<Boolean> isNetworkException;
     private MutableLiveData<Boolean> isQueryValidationException;
     private MutableLiveData<Boolean> isLoading;
 
+    @Inject
+    public RepoListViewModel(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
     public LiveData<List<Repository>> geRepositories() {
         if (repositories == null) {

@@ -4,6 +4,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,7 +21,9 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.R;
+import dev.colibri.githubclienttest.di.ViewModelFactory;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.viewmodel.RepoDetailsViewModel;
 
@@ -39,6 +43,7 @@ public class RepoDetailsFragment extends Fragment {
     private ProgressBar progressBar;
 
     private RepoDetailsViewModel viewModel;
+    @Inject ViewModelFactory viewModelFactory;
 
     public static RepoDetailsFragment newInstance(String repoName, String userLogin) {
 
@@ -58,7 +63,7 @@ public class RepoDetailsFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_repo_details, container, false);
-
+        App.getAppComponent().inject(this);
 
         initView(view);
         initViewModel();
@@ -74,7 +79,7 @@ public class RepoDetailsFragment extends Fragment {
     }
 
     private void initViewModel() {
-        viewModel = ViewModelProviders.of(this).get(RepoDetailsViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(RepoDetailsViewModel.class);
         viewModel.getRepository().observe(this, (repository -> {
             if(repository != null) {
                 display(repository);

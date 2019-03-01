@@ -1,5 +1,7 @@
 package dev.colibri.githubclienttest.fragment;
 
+import javax.inject.Inject;
+
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
@@ -14,9 +16,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.activity.MainActivity;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
+import dev.colibri.githubclienttest.di.ViewModelFactory;
 import dev.colibri.githubclienttest.viewmodel.RepoListViewModel;
 
 public class RepoListFragment extends Fragment {
@@ -27,6 +31,7 @@ public class RepoListFragment extends Fragment {
     private MainActivity mainActivity;
 
     private RepoListViewModel viewModel;
+    @Inject ViewModelFactory viewModelFactory;
 
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -42,6 +47,7 @@ public class RepoListFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_repo_list, container, false);
+        App.getAppComponent().inject(this);
 
         initRecyclerView(view);
         initViewModel();
@@ -51,7 +57,7 @@ public class RepoListFragment extends Fragment {
     }
 
     private void initViewModel() {
-        viewModel = ViewModelProviders.of(this).get(RepoListViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(RepoListViewModel.class);
 
         viewModel.geRepositories().observe(this, (repositories -> {
             if(repositories != null) {

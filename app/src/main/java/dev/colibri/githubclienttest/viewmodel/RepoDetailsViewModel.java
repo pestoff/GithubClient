@@ -2,23 +2,28 @@ package dev.colibri.githubclienttest.viewmodel;
 
 import java.io.IOException;
 
+import javax.inject.Inject;
+
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.os.AsyncTask;
 
-import dev.colibri.githubclienttest.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoDetailsViewModel extends ViewModel {
 
-    private DataRepository dataRepository = App.getDataRepository();
+    private DataRepository dataRepository;
 
     private MutableLiveData<Repository> repository;
     private MutableLiveData<Boolean> isNetworkException;
     private MutableLiveData<Boolean> isLoading;
 
+    @Inject
+    public RepoDetailsViewModel(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
     public LiveData<Repository> getRepository() {
         if (repository == null) {
