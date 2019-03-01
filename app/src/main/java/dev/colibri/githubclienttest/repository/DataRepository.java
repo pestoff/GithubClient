@@ -1,7 +1,7 @@
 package dev.colibri.githubclienttest.repository;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -26,15 +26,15 @@ public class DataRepository {
         return repository;
     }
 
-    public ArrayList<Repository> getRepositories(String query) throws IOException {
-        ArrayList<Repository> repositories = null;
+    public List<Repository> getRepositories(String query) throws IOException {
+        List<Repository> repositories = null;
         try {
 
             repositories = httpClient.getRepositories(query);
             db.repositoryDao().insertRepositories(repositories);
         } catch (IOException e) {
             String dbWildCardQuery = "%" + query + "%";
-            repositories = new ArrayList<>(db.repositoryDao().getRepositories(dbWildCardQuery));
+            repositories = db.repositoryDao().getRepositories(dbWildCardQuery);
         }
 
         if(repositories == null) throw new IOException("Can't find repositories entities in db or api");
