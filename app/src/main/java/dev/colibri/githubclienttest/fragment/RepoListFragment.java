@@ -1,7 +1,7 @@
 package dev.colibri.githubclienttest.fragment;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -74,7 +74,7 @@ public class RepoListFragment extends Fragment {
         }
     }
 
-    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
+    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
 
         @Override
         protected void onPreExecute() {
@@ -82,7 +82,7 @@ public class RepoListFragment extends Fragment {
         }
 
         @Override
-        protected ArrayList<Repository> doInBackground(String... queries) {
+        protected List<Repository> doInBackground(String... queries) {
 
             try {
                 return httpClient.getRepositories(queries[0]);
@@ -93,7 +93,7 @@ public class RepoListFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Repository> result) {
+        protected void onPostExecute(List<Repository> result) {
             progressBar.setVisibility(View.GONE);
 
             if(result != null) {
