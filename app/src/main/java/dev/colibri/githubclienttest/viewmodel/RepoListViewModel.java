@@ -1,0 +1,87 @@
+package dev.colibri.githubclienttest.viewmodel;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModel;
+import android.os.AsyncTask;
+
+import dev.colibri.githubclienttest.App;
+import dev.colibri.githubclienttest.entity.Repository;
+import dev.colibri.githubclienttest.repository.DataRepository;
+
+public class RepoListViewModel extends ViewModel {
+    private DataRepository dataRepository = App.getDataRepository();
+
+    private MutableLiveData<List<Repository>> repositories;
+    private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isQueryValidationException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+
+
+    public LiveData<List<Repository>> geRepositories() {
+        if (repositories == null) {
+            repositories = new MutableLiveData<>();
+        }
+        return repositories;
+    }
+
+
+    public LiveData<Boolean> isNetworkException() {
+        return isNetworkException;
+    }
+
+    public LiveData<Boolean> isQueryValidationException() {
+        return isQueryValidationException;
+    }
+
+    public LiveData<Boolean> isLoading() {
+        return isLoading;
+    }
+
+    public void searchRepositories(String query) {
+        if(query.isEmpty()) {
+            // don't want value to be saved after screen rotation
+            isQueryValidationException.setValue(true);
+            isQueryValidationException.setValue(false);
+        } else {
+            new GetRepositoriesAsyncTask().execute(query);
+        }
+    }
+
+    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
+
+        @Override
+        protected void onPreExecute() {
+            isLoading.setValue(true);
+        }
+
+        @Override
+        protected ArrayList<Repository> doInBackground(String... queries) {
+
+            try {
+                return dataRepository.getRepositories(queries[0]);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Repository> result) {
+            isLoading.setValue(false);
+
+            if(result != null) {
+                repositories.setValue(result);
+            } else {
+                // don't want value to be saved after screen rotation
+                isNetworkException.setValue(true);
+                isNetworkException.setValue(false);
+            }
+        }
+    }
+
+}
