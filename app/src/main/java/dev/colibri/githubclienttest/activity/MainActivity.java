@@ -1,7 +1,7 @@
 package dev.colibri.githubclienttest.activity;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -9,16 +9,10 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
-
-import org.json.JSONException;
 
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
@@ -32,7 +26,6 @@ public class MainActivity extends AppCompatActivity {
     private RepositoryAdapter repositoryAdapter;
     private EditText queryEditText;
     private ProgressBar progressBar;
-    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,8 +36,6 @@ public class MainActivity extends AppCompatActivity {
 
         queryEditText = findViewById(R.id.query_edit_text);
         progressBar = findViewById(R.id.progress_bar);
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
         httpClient = new HttpClient();
     }
@@ -77,26 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.settings:
-                Toast.makeText(this, R.string.settings_clicked_hint, Toast.LENGTH_SHORT).show();
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
+    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
 
         @Override
         protected void onPreExecute() {
@@ -104,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected ArrayList<Repository> doInBackground(String... queries) {
+        protected List<Repository> doInBackground(String... queries) {
 
             try {
                 return httpClient.getRepositories(queries[0]);
@@ -115,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Repository> result) {
+        protected void onPostExecute(List<Repository> result) {
             progressBar.setVisibility(View.GONE);
 
             if(result != null) {
