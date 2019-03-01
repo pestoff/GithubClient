@@ -2,19 +2,20 @@ package dev.colibri.githubclienttest.viewmodel;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.os.AsyncTask;
 
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoListViewModel extends ViewModel {
     private DataRepository dataRepository;
+    private Executor executor;
 
     private MutableLiveData<List<Repository>> repositories = new MutableLiveData<>();
     private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
@@ -22,11 +23,12 @@ public class RepoListViewModel extends ViewModel {
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     @Inject
-    public RepoListViewModel(DataRepository dataRepository) {
+    public RepoListViewModel(DataRepository dataRepository, Executor executor) {
         this.dataRepository = dataRepository;
+        this.executor = executor;
     }
 
-    public LiveData<List<Repository>> geRepositories() {
+    public LiveData<List<Repository>> getRepositories() {
         return repositories;
     }
 
@@ -50,38 +52,24 @@ public class RepoListViewModel extends ViewModel {
         if(query.isEmpty()) {
             isQueryValidationException.setValue(true);
         } else {
-            new GetRepositoriesAsyncTask().execute(query);
+            requestRepositories(query);
         }
     }
 
-    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
-
-        @Override
-        protected void onPreExecute() {
-            isLoading.setValue(true);
-        }
-
-        @Override
-        protected List<Repository> doInBackground(String... queries) {
-
+    private void requestRepositories(String query) {
+        isLoading.setValue(true);
+        executor.execute(() -> {
             try {
-                return dataRepository.getRepositories(queries[0]);
+                List<Repository> result = dataRepository.getRepositories(query);
+                repositories.postValue(result);
+
             } catch (IOException e) {
                 e.printStackTrace();
-                return null;
+                isNetworkException.postValue(true);
+            } finally {
+                isLoading.postValue(false);
             }
-        }
-
-        @Override
-        protected void onPostExecute(List<Repository> result) {
-            isLoading.setValue(false);
-
-            if(result != null) {
-                repositories.setValue(result);
-            } else {
-                isNetworkException.setValue(true);
-            }
-        }
+        });
     }
 
 }
