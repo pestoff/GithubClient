@@ -2,6 +2,7 @@ package dev.colibri.githubclienttest.network;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -20,7 +21,7 @@ public class HttpClient {
         this.githubService = githubService;
     }
 
-    public ArrayList<Repository> getRepositories(String query) throws IOException {
+    public List<Repository> getRepositories(String query) throws IOException {
         RepositoriesResponse response = getResponse(githubService.searchRepos(query));
         return response.getRepositories();
     }
