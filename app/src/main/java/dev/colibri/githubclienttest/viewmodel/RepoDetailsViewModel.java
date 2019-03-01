@@ -58,9 +58,8 @@ public class RepoDetailsViewModel extends ViewModel {
             String repoName = params[0];
             String userLogin = params[1];
             try {
-                Thread.sleep(2000);
                 return dataRepository.getRepository(repoName, userLogin);
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }
