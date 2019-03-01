@@ -17,9 +17,9 @@ public class RepoListViewModel extends ViewModel {
     private DataRepository dataRepository = App.getDataRepository();
 
     private MutableLiveData<List<Repository>> repositories;
-    private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isQueryValidationException = new MutableLiveData<>();
-    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isNetworkException;
+    private MutableLiveData<Boolean> isQueryValidationException;
+    private MutableLiveData<Boolean> isLoading;
 
 
     public LiveData<List<Repository>> geRepositories() {
@@ -31,14 +31,23 @@ public class RepoListViewModel extends ViewModel {
 
 
     public LiveData<Boolean> isNetworkException() {
+        if(isNetworkException == null) {
+            isNetworkException = new MutableLiveData<>();
+        }
         return isNetworkException;
     }
 
     public LiveData<Boolean> isQueryValidationException() {
+        if(isQueryValidationException == null) {
+            isQueryValidationException = new MutableLiveData<>();
+        }
         return isQueryValidationException;
     }
 
     public LiveData<Boolean> isLoading() {
+        if(isLoading == null) {
+            isLoading = new MutableLiveData<>();
+        }
         return isLoading;
     }
 
