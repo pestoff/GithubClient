@@ -1,6 +1,6 @@
 package dev.colibri.githubclienttest.entity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -12,7 +12,7 @@ public class RepositoriesResponse {
     private Boolean incompleteResults;
 
     @SerializedName("items")
-    private ArrayList<Repository> repositories;
+    private List<Repository> repositories;
 
 
     public Long getTotalCount() {
@@ -23,7 +23,7 @@ public class RepositoriesResponse {
         return incompleteResults;
     }
 
-    public ArrayList<Repository> getRepositories() {
+    public List<Repository> getRepositories() {
         return repositories;
     }
 
