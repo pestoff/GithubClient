@@ -16,9 +16,9 @@ public class RepoDetailsViewModel extends ViewModel {
 
     private DataRepository dataRepository;
 
-    private MutableLiveData<Repository> repository;
-    private MutableLiveData<Boolean> isNetworkException;
-    private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<Repository> repository = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
+    private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
     @Inject
     public RepoDetailsViewModel(DataRepository dataRepository) {
@@ -26,24 +26,15 @@ public class RepoDetailsViewModel extends ViewModel {
     }
 
     public LiveData<Repository> getRepository() {
-        if (repository == null) {
-            repository = new MutableLiveData<>();
-        }
         return repository;
     }
 
 
     public LiveData<Boolean> isException() {
-        if(isNetworkException == null) {
-            isNetworkException = new MutableLiveData<>();
-        }
         return isNetworkException;
     }
 
     public LiveData<Boolean> isLoading() {
-        if(isLoading == null) {
-            isLoading = new MutableLiveData<>();
-        }
         return isLoading;
     }
 
@@ -79,9 +70,7 @@ public class RepoDetailsViewModel extends ViewModel {
                 repository.setValue(result);
             }
             else {
-                // don't want value to be saved after screen rotation
                 isNetworkException.setValue(true);
-                isNetworkException.setValue(false);
             }
         }
     }
