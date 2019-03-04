@@ -53,7 +53,7 @@ public class RepoListFragment extends Fragment {
     private void initViewModel() {
         viewModel = ViewModelProviders.of(this).get(RepoListViewModel.class);
 
-        viewModel.geRepositories().observe(this, (repositories -> {
+        viewModel.getRepositories().observe(this, (repositories -> {
             if(repositories != null) {
                 repositoryAdapter.addItems(repositories);
             }

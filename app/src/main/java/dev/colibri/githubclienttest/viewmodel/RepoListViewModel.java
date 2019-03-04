@@ -22,7 +22,7 @@ public class RepoListViewModel extends ViewModel {
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
 
-    public LiveData<List<Repository>> geRepositories() {
+    public LiveData<List<Repository>> getRepositories() {
         return repositories;
     }
 
