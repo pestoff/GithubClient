@@ -27,7 +27,7 @@ public class RepoListViewModel extends ViewModel {
         this.dataRepository = dataRepository;
     }
 
-    public LiveData<List<Repository>> geRepositories() {
+    public LiveData<List<Repository>> getRepositories() {
         return repositories;
     }
 
