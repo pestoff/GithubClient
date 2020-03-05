@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 
+import com.google.gson.Gson;
+
 import org.json.JSONException;
 
 import dev.colibri.githubclienttest.entity.Repository;
@@ -20,7 +22,7 @@ public class HttpClient {
     private static final String REPOSITORY_SEARCH_URL = "https://api.github.com/search/repositories";
     private static final String REPOS_URL = "https://api.github.com/repos";
     private static final String QUERY_PARAM = "q";
-    private final JsonParser jsonParser = new JsonParser();
+    private final JsonParser jsonParser = new JsonParser(new Gson());
 
 
     public Repository getRepository(String repoName, String userLogin) throws IOException, JSONException {
