@@ -20,6 +20,7 @@ import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
+import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "dc.MainActivity";
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         queryEditText = findViewById(R.id.query_edit_text);
         progressBar = findViewById(R.id.progress_bar);
 
-        httpClient = new HttpClient();
+        httpClient = new HttpClient(new OkHttpClient());
     }
 
     private void initRecyclerView() {
@@ -82,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 return httpClient.getRepositories(queries[0]);
-            } catch (IOException | JSONException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }

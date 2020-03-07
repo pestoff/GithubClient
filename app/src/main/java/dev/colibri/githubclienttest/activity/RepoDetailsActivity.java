@@ -21,6 +21,7 @@ import org.json.JSONException;
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
+import okhttp3.OkHttpClient;
 
 public class RepoDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_REPO_NAME = "repoName";
@@ -49,7 +50,7 @@ public class RepoDetailsActivity extends AppCompatActivity {
 
         initView();
 
-        httpClient = new HttpClient();
+        httpClient = new HttpClient(new OkHttpClient());
 
         new GetRepositoryAsyncTask().execute(repoName, userLogin);
     }
@@ -104,7 +105,7 @@ public class RepoDetailsActivity extends AppCompatActivity {
             String userLogin = params[1];
             try {
                 return httpClient.getRepository(repoName, userLogin);
-            } catch (IOException | JSONException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }

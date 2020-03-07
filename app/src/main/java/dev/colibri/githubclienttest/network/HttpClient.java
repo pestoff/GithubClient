@@ -17,15 +17,22 @@ import org.json.JSONException;
 
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.JsonParser;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class HttpClient {
     private static final String REPOSITORY_SEARCH_URL = "https://api.github.com/search/repositories";
     private static final String REPOS_URL = "https://api.github.com/repos";
     private static final String QUERY_PARAM = "q";
     private final JsonParser jsonParser = new JsonParser(new Gson());
+    OkHttpClient client;
 
+    public HttpClient(OkHttpClient client) {
+        this.client = client;
+    }
 
-    public Repository getRepository(String repoName, String userLogin) throws IOException, JSONException {
+    public Repository getRepository(String repoName, String userLogin) throws IOException {
         String requestUrl = Uri.parse(REPOS_URL)
                                .buildUpon()
                                .appendPath(userLogin)
@@ -37,7 +44,7 @@ public class HttpClient {
         return jsonParser.getRepository(response);
     }
 
-    public ArrayList<Repository> getRepositories(String query) throws IOException, JSONException {
+    public ArrayList<Repository> getRepositories(String query) throws IOException {
         String requestUrl = Uri.parse(REPOSITORY_SEARCH_URL)
                                .buildUpon()
                                .appendQueryParameter(QUERY_PARAM, query)
@@ -51,41 +58,14 @@ public class HttpClient {
 
     @NonNull
     private String getResponse(String requestUrl) throws IOException {
-        URL url = new URL(requestUrl);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        Request request = new Request.Builder().url(requestUrl).build();
 
-        try {
-            connection.connect();
-
-            InputStream in;
-            int status = connection.getResponseCode();
-            if (status == HttpURLConnection.HTTP_OK) {
-                in = connection.getInputStream();
-            }
-            else {
-                in = connection.getErrorStream();
-            }
-
-            String response = convertStreamToString(in);
-
+        Response responseRaw = client.newCall(request).execute();
+        if (responseRaw.isSuccessful()) {
+            String response = responseRaw.body().string();
             return response;
-
-        } finally {
-            connection.disconnect();
+        } else {
+            throw new IOException ("Response is not successful");
         }
-    }
-
-    private String convertStreamToString(InputStream stream) throws IOException {
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-        StringBuilder sb = new StringBuilder();
-
-        String line;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line).append("\n");
-        }
-        stream.close();
-
-        return sb.toString();
     }
 }

@@ -1,6 +1,8 @@
 package dev.colibri.githubclienttest.network;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
@@ -20,9 +22,9 @@ public class JsonParser {
         this.gson = gson;
     }
 
-    public ArrayList<Repository> getRepositories(String jsonString) throws JSONException {
-        JSONObject json = new JSONObject(jsonString);
-        JSONArray items = json.getJSONArray("items");
+    public ArrayList<Repository> getRepositories(String jsonString)  {
+        JsonObject json = gson.fromJson(jsonString, JsonObject.class);
+        JsonElement items = json.get("items");
 
         Type arrayListType = new TypeToken<ArrayList<Repository>>(){}.getType();
         return gson.fromJson(items.toString(), arrayListType);
