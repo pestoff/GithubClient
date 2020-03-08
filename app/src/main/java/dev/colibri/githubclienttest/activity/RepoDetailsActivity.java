@@ -9,19 +9,15 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONException;
-
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
-import okhttp3.OkHttpClient;
 
 public class RepoDetailsActivity extends AppCompatActivity {
     public static final String EXTRA_REPO_NAME = "repoName";
@@ -50,7 +46,7 @@ public class RepoDetailsActivity extends AppCompatActivity {
 
         initView();
 
-        httpClient = new HttpClient(new OkHttpClient());
+        httpClient = new HttpClient();
 
         new GetRepositoryAsyncTask().execute(repoName, userLogin);
     }

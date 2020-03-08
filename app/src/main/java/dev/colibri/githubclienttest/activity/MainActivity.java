@@ -1,7 +1,7 @@
 package dev.colibri.githubclienttest.activity;
 
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -14,13 +14,10 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
-import okhttp3.OkHttpClient;
 
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "dc.MainActivity";
@@ -40,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         queryEditText = findViewById(R.id.query_edit_text);
         progressBar = findViewById(R.id.progress_bar);
 
-        httpClient = new HttpClient(new OkHttpClient());
+        httpClient = new HttpClient();
     }
 
     private void initRecyclerView() {
@@ -71,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, ArrayList<Repository>> {
+    private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
 
         @Override
         protected void onPreExecute() {
@@ -79,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected ArrayList<Repository> doInBackground(String... queries) {
+        protected List<Repository> doInBackground(String... queries) {
 
             try {
                 return httpClient.getRepositories(queries[0]);
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Repository> result) {
+        protected void onPostExecute(List<Repository> result) {
             progressBar.setVisibility(View.GONE);
 
             if(result != null) {
