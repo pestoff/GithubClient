@@ -7,6 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".activity.MainActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="@style/Toolbar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
@@ -17,15 +23,6 @@
         app:layout_constraintStart_toStartOf="@+id/repository_recycler_view"
         app:layout_constraintTop_toTopOf="@+id/repository_recycler_view"/>
 
-    <EditText
-        android:id="@+id/query_edit_text"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:hint="@string/query_hint"
-        app:layout_constraintEnd_toStartOf="@+id/search_button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/repository_recycler_view"
@@ -35,22 +32,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/query_edit_text"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:layout_constraintVertical_bias="1.0"/>
 
-    <Button
-        android:id="@+id/search_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/white"
-        android:minHeight="0dp"
-        android:padding="8dp"
-        android:text="@string/search"
-        android:onClick="searchRepositories"
-        app:layout_constraintBottom_toBottomOf="@+id/query_edit_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/query_edit_text"/>
 
 </android.support.constraint.ConstraintLayout>

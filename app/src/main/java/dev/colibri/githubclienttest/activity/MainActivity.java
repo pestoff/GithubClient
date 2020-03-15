@@ -6,9 +6,14 @@ import java.util.List;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
@@ -22,22 +27,62 @@ import dev.colibri.githubclienttest.network.HttpClient;
 public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = "dc.MainActivity";
 
+    private Toolbar toolbar;
+
     private HttpClient httpClient;
     private RepositoryAdapter repositoryAdapter;
-    private EditText queryEditText;
     private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         initRecyclerView();
 
-        queryEditText = findViewById(R.id.query_edit_text);
         progressBar = findViewById(R.id.progress_bar);
 
         httpClient = new HttpClient();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        searchView.setOnQueryTextListener(
+                new SearchView.OnQueryTextListener() {
+
+                    @Override
+                    public boolean onQueryTextSubmit(String s) {
+                        repositoryAdapter.clearItems();
+                        new GetRepositoriesAsyncTask().execute(s);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String s) {
+                        return false;
+                    }
+                }
+        );
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case (R.id.settings_toolbar) : {
+                Toast.makeText(this, R.string.settings_clicked, Toast.LENGTH_SHORT).show();
+            }
+        }
+        return true;
     }
 
     private void initRecyclerView() {
@@ -58,15 +103,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(repositoryAdapter);
     }
 
-    public void searchRepositories(View v) {
-        String query = queryEditText.getText().toString();
-        if(query.isEmpty()) {
-            Toast.makeText(this, R.string.empty_text, Toast.LENGTH_SHORT).show();
-        } else {
-            repositoryAdapter.clearItems();
-            new GetRepositoriesAsyncTask().execute(query);
-        }
-    }
 
     private class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
 

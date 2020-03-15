@@ -7,4 +7,7 @@
     <string name="updated_hint">Updated:</string>
     <string name="created_hint">Created:</string>
     <string name="language_hint">Language:</string>
+    <string name="settings_toolbar">Settings</string>
+    <string name="search_toolbar">Search</string>
+    <string name="settings_clicked">Settings was clicked</string>
 </resources>

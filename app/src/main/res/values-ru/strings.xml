@@ -7,4 +7,7 @@
     <string name="updated_hint">Обновлён:</string>
     <string name="created_hint">Создан:</string>
     <string name="language_hint">Язык:</string>
+    <string name="settings_toolbar">Настройки</string>
+    <string name="search_toolbar">Поиск</string>
+    <string name="settings_clicked">Настройки были нажаты</string>
 </resources>
