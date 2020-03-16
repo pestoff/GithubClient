@@ -1,28 +1,32 @@
-package dev.colibri.githubclienttest.activity;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+package dev.colibri.githubclienttest.fragment;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
 
-public class RepoDetailsActivity extends AppCompatActivity {
-    public static final String EXTRA_REPO_NAME = "repoName";
-    public static final String EXTRA_USER_LOGIN = "userLogin";
-    private static final String LOG_TAG = "dc.RepoDetailsActivity";
+public class RepoDetailsFragment extends Fragment {
+
+    private static String mRepoName;
+    private static String mUserLogin;
 
     private HttpClient httpClient;
 
@@ -35,31 +39,43 @@ public class RepoDetailsActivity extends AppCompatActivity {
     private TextView updatedTextView;
     private TextView languageTextView;
 
+    public RepoDetailsFragment() {
+    }
 
+    public static RepoDetailsFragment newInstance(Repository repository) {
+        mRepoName = repository.getName();
+        mUserLogin = repository.getOwner().getLogin();
+
+        return new RepoDetailsFragment();
+    }
+
+    public void updateContent(Repository repository) {
+        new GetRepositoryAsyncTask().execute(repository.getName(), repository.getOwner().getLogin());
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_repo_details);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_repo_details, container, false);
 
-        String repoName = getIntent().getStringExtra(EXTRA_REPO_NAME);
-        String userLogin = getIntent().getStringExtra(EXTRA_USER_LOGIN);
-
-        initView();
+        initView(view);
 
         httpClient = new HttpClient();
 
-        new GetRepositoryAsyncTask().execute(repoName, userLogin);
+        new GetRepositoryAsyncTask().execute(mRepoName, mUserLogin);
+
+        return view;
     }
 
-    private void initView() {
-        ownerImageView = findViewById(R.id.owner_image_view);
-        nameTextView = findViewById(R.id.name_text_view);
-        descriptionTextView = findViewById(R.id.description_text_view);
-        starsTextView = findViewById(R.id.stars_text_view);
-        forksTextView = findViewById(R.id.forks_text_view);
-        createdTextView = findViewById(R.id.created_text_view);
-        updatedTextView = findViewById(R.id.updated_text_view);
-        languageTextView = findViewById(R.id.language_text_view);
+    private void initView(View view) {
+        ownerImageView = view.findViewById(R.id.owner_image_view);
+        nameTextView = view.findViewById(R.id.name_text_view);
+        descriptionTextView = view.findViewById(R.id.description_text_view);
+        starsTextView = view.findViewById(R.id.stars_text_view);
+        forksTextView = view.findViewById(R.id.forks_text_view);
+        createdTextView = view.findViewById(R.id.created_text_view);
+        updatedTextView = view.findViewById(R.id.updated_text_view);
+        languageTextView = view.findViewById(R.id.language_text_view);
     }
 
     void display(Repository repository) {
@@ -112,7 +128,7 @@ public class RepoDetailsActivity extends AppCompatActivity {
             if(repository != null) {
                 display(repository);
             } else {
-                Toast.makeText(RepoDetailsActivity.this, R.string.error_msg, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
             }
         }
     }
