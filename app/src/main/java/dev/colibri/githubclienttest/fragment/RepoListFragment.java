@@ -19,14 +19,16 @@ import java.util.List;
 
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
+import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
+import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoListFragment extends Fragment {
 
     private repositorySelectedCallback callback;
 
-    private HttpClient httpClient;
+    private DataRepository dataRepository;
     private RepositoryAdapter repositoryAdapter;
     private ProgressBar progressBar;
 
@@ -46,7 +48,7 @@ public class RepoListFragment extends Fragment {
 
         progressBar = view.findViewById(R.id.progress_bar);
 
-        httpClient = new HttpClient();
+        dataRepository = App.getDataRepository();
 
         return view;
     }
@@ -99,11 +101,12 @@ public class RepoListFragment extends Fragment {
         protected List<Repository> doInBackground(String... queries) {
 
             try {
-                return httpClient.getRepositories(queries[0]);
+                return dataRepository.getRepositories(queries[0]);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }
+
         }
 
         @Override

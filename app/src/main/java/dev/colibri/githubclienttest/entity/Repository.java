@@ -1,13 +1,21 @@
 package dev.colibri.githubclienttest.entity;
 
+import android.arch.persistence.room.Embedded;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "repository")
 public class Repository {
 
+    @PrimaryKey(autoGenerate = true)
     private int id;
     private String name;
     private String description;
     private String language;
+
+    @Embedded(prefix = "owner_")
     private Owner owner;
 
     @SerializedName("created_at")

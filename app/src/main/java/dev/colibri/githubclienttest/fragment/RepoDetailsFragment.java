@@ -20,15 +20,17 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import dev.colibri.githubclienttest.R;
+import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
+import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoDetailsFragment extends Fragment {
 
     private static String mRepoName;
     private static String mUserLogin;
 
-    private HttpClient httpClient;
+    private DataRepository dataRepository;
 
     private ImageView ownerImageView;
     private TextView nameTextView;
@@ -60,7 +62,7 @@ public class RepoDetailsFragment extends Fragment {
 
         initView(view);
 
-        httpClient = new HttpClient();
+        dataRepository = App.getDataRepository();
 
         new GetRepositoryAsyncTask().execute(mRepoName, mUserLogin);
 
@@ -115,12 +117,14 @@ public class RepoDetailsFragment extends Fragment {
         protected Repository doInBackground(String... params) {
             String repoName = params[0];
             String userLogin = params[1];
+
             try {
-                return httpClient.getRepository(repoName, userLogin);
+                return dataRepository.getRepository(repoName, userLogin);
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;
             }
+
         }
 
         @Override
