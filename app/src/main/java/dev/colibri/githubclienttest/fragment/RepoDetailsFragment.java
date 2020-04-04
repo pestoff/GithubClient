@@ -1,6 +1,6 @@
 package dev.colibri.githubclienttest.fragment;
 
-import android.os.AsyncTask;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,28 +9,22 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import dev.colibri.githubclienttest.R;
-import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
-import dev.colibri.githubclienttest.network.HttpClient;
-import dev.colibri.githubclienttest.repository.DataRepository;
+import dev.colibri.githubclienttest.viewModel.RepoDetailsViewModel;
 
 public class RepoDetailsFragment extends Fragment {
 
     private static String mRepoName;
     private static String mUserLogin;
 
-    private DataRepository dataRepository;
+    private RepoDetailsViewModel viewModel;
 
     private ImageView ownerImageView;
     private TextView nameTextView;
@@ -40,6 +34,7 @@ public class RepoDetailsFragment extends Fragment {
     private TextView createdTextView;
     private TextView updatedTextView;
     private TextView languageTextView;
+    private ProgressBar progressBar;
 
     public RepoDetailsFragment() {
     }
@@ -52,7 +47,10 @@ public class RepoDetailsFragment extends Fragment {
     }
 
     public void updateContent(Repository repository) {
-        new GetRepositoryAsyncTask().execute(repository.getName(), repository.getOwner().getLogin());
+        mRepoName = repository.getName();
+        mUserLogin = repository.getOwner().getLogin();
+
+        viewModel.updateContent(mRepoName, mUserLogin);
     }
 
     @Nullable
@@ -61,12 +59,33 @@ public class RepoDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_repo_details, container, false);
 
         initView(view);
+        initViewModel();
 
-        dataRepository = App.getDataRepository();
-
-        new GetRepositoryAsyncTask().execute(mRepoName, mUserLogin);
+        viewModel.updateContent(mRepoName, mUserLogin);
 
         return view;
+    }
+
+    private void initViewModel() {
+        viewModel = ViewModelProviders.of(this).get(RepoDetailsViewModel.class);
+
+        viewModel.getRepositoryMutableLiveData().observe(this, repository -> {
+            display(repository);
+        });
+
+        viewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        viewModel.getIsNetworkException().observe(this, isException -> {
+            if (isException) {
+                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     private void initView(View view) {
@@ -78,6 +97,7 @@ public class RepoDetailsFragment extends Fragment {
         createdTextView = view.findViewById(R.id.created_text_view);
         updatedTextView = view.findViewById(R.id.updated_text_view);
         languageTextView = view.findViewById(R.id.language_text_view);
+        progressBar = view.findViewById(R.id.progress_bar);
     }
 
     void display(Repository repository) {
@@ -94,46 +114,8 @@ public class RepoDetailsFragment extends Fragment {
 
         languageTextView.setText(repository.getLanguage());
         String createdAt = repository.getCreatedAt();
-        createdTextView.setText(getFormattedDate(createdAt));
+        createdTextView.setText(viewModel.getFormattedDate(createdAt));
         String updatedAt = repository.getUpdatedAt();
-        updatedTextView.setText(getFormattedDate(updatedAt));
-    }
-
-    private String getFormattedDate(String dateString) {
-        SimpleDateFormat githubFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        try {
-            Date date = githubFormat.parse(dateString);
-
-            SimpleDateFormat outputFormat = new SimpleDateFormat("dd.MM.yyyy");
-            return outputFormat.format(date);
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private class GetRepositoryAsyncTask extends AsyncTask<String, Void, Repository> {
-
-        @Override
-        protected Repository doInBackground(String... params) {
-            String repoName = params[0];
-            String userLogin = params[1];
-
-            try {
-                return dataRepository.getRepository(repoName, userLogin);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(Repository repository) {
-            if(repository != null) {
-                display(repository);
-            } else {
-                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
-            }
-        }
+        updatedTextView.setText(viewModel.getFormattedDate(updatedAt));
     }
 }

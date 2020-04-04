@@ -1,5 +1,7 @@
 package dev.colibri.githubclienttest.fragment;
 
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -23,12 +25,14 @@ import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
 import dev.colibri.githubclienttest.repository.DataRepository;
+import dev.colibri.githubclienttest.viewModel.RepoListViewModel;
 
 public class RepoListFragment extends Fragment {
 
+    private RepoListViewModel repoListViewModel;
+
     private repositorySelectedCallback callback;
 
-    private DataRepository dataRepository;
     private RepositoryAdapter repositoryAdapter;
     private ProgressBar progressBar;
 
@@ -45,12 +49,39 @@ public class RepoListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_repo_list, container, false);
 
         initRecyclerView(view);
+        initViewModel();
 
         progressBar = view.findViewById(R.id.progress_bar);
 
-        dataRepository = App.getDataRepository();
-
         return view;
+    }
+
+    private void initViewModel() {
+        repoListViewModel = ViewModelProviders.of(this).get(RepoListViewModel.class);
+
+        repoListViewModel.getIsLoading().observe(this, isLoading -> {
+            if (isLoading) {
+                progressBar.setVisibility(View.VISIBLE);
+            } else {
+                progressBar.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        repoListViewModel.getRepositories().observe(this, repositories -> {
+            repositoryAdapter.addItems(repositories);
+        });
+
+        repoListViewModel.getIsNetworkException().observe(this, isException -> {
+            if (isException) {
+                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        repoListViewModel.getIsQueryValidationException().observe(this, isException -> {
+            if (isException) {
+                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -87,41 +118,10 @@ public class RepoListFragment extends Fragment {
 
     public void onSearchQueryChanged(String request) {
         repositoryAdapter.clearItems();
-        new GetRepositoriesAsyncTask().execute(request);
-    }
-
-    public class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
-
-        @Override
-        protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected List<Repository> doInBackground(String... queries) {
-
-            try {
-                return dataRepository.getRepositories(queries[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(List<Repository> result) {
-            progressBar.setVisibility(View.GONE);
-
-            if(result != null) {
-                repositoryAdapter.addItems(result);
-            } else {
-                Toast.makeText(getActivity(), R.string.error_msg, Toast.LENGTH_SHORT).show();
-            }
-        }
+        repoListViewModel.loadRepositories(request);
     }
 
     public interface repositorySelectedCallback {
-        public void onRepositorySelected(Repository repository);
+        void onRepositorySelected(Repository repository);
     }
 }

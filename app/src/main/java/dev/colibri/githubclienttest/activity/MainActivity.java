@@ -21,7 +21,7 @@ public class MainActivity extends AppCompatActivity
 
     private RepoListFragment listFragment;
     private RepoDetailsFragment detailsFragment;
-    FragmentManager manager;
+    private FragmentManager manager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

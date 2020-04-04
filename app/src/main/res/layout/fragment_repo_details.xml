@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp">
+    android:layout_height="match_parent">
 
     <ImageView
         android:id="@+id/owner_image_view"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="16dp"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@tools:sample/avatars"/>
 
@@ -20,32 +19,32 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:textAppearance="@style/TextPrimary.Bold"
-        tools:text="Kotlin"
         android:ellipsize="end"
+        android:textAppearance="@style/TextPrimary.Bold"
+        app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toTopOf="@+id/description_text_view"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toEndOf="@+id/owner_image_view"
         app:layout_constraintTop_toTopOf="@+id/owner_image_view"
-        app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Kotlin"/>
 
     <TextView
         android:id="@+id/description_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textAppearance="@style/TextSecondary"
-        tools:text="Лучший язык"
-        android:maxLines="2"
         android:ellipsize="end"
+        android:maxLines="2"
+        android:textAppearance="@style/TextSecondary"
         app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintBottom_toTopOf="@+id/stars_image_view"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintStart_toStartOf="@+id/name_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/name_text_view"/>
+        app:layout_constraintTop_toBottomOf="@+id/name_text_view"
+        tools:text="Лучший язык"/>
 
     <ImageView
         android:id="@+id/stars_image_view"
@@ -61,10 +60,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textAppearance="@style/TextSecondary"
-        tools:text="2345"
         app:layout_constraintBottom_toBottomOf="@+id/stars_image_view"
         app:layout_constraintStart_toEndOf="@+id/stars_image_view"
-        app:layout_constraintTop_toTopOf="@+id/stars_image_view"/>
+        app:layout_constraintTop_toTopOf="@+id/stars_image_view"
+        tools:text="2345"/>
 
     <ImageView
         android:id="@+id/forks_image_view"
@@ -82,47 +81,48 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:textAppearance="@style/TextSecondary"
-        tools:text="4892"
         app:layout_constraintBottom_toBottomOf="@+id/forks_image_view"
         app:layout_constraintStart_toEndOf="@+id/forks_image_view"
-        app:layout_constraintTop_toTopOf="@+id/forks_image_view"/>
+        app:layout_constraintTop_toTopOf="@+id/forks_image_view"
+        tools:text="4892"/>
 
     <TextView
         android:id="@+id/language_hint_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/language_hint"
         android:textAppearance="@style/TextSecondary"
         app:layout_constraintStart_toStartOf="@+id/owner_image_view"
-        app:layout_constraintTop_toBottomOf="@+id/owner_image_view"
-        android:text="@string/language_hint"/>
+        app:layout_constraintTop_toBottomOf="@+id/owner_image_view"/>
 
     <TextView
         android:id="@+id/created_hint_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:text="@string/created_hint"
         android:textAppearance="@style/TextSecondary"
         app:layout_constraintStart_toStartOf="@+id/language_hint_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/language_hint_text_view"
-        android:text="@string/created_hint"/>
+        app:layout_constraintTop_toBottomOf="@+id/language_hint_text_view"/>
 
     <TextView
         android:id="@+id/updated_hint_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:text="@string/updated_hint"
         android:textAppearance="@style/TextSecondary"
         app:layout_constraintStart_toStartOf="@+id/language_hint_text_view"
-        app:layout_constraintTop_toBottomOf="@+id/created_hint_text_view"
-        android:text="@string/updated_hint"/>
+        app:layout_constraintTop_toBottomOf="@+id/created_hint_text_view"/>
 
     <android.support.constraint.Barrier
         android:id="@+id/barrier"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="end"
-        app:constraint_referenced_ids="language_hint_text_view,updated_hint_text_view,created_hint_text_view"/>
+        app:constraint_referenced_ids="language_hint_text_view,updated_hint_text_view,created_hint_text_view"
+        />
 
     <TextView
         android:id="@+id/language_text_view"
@@ -141,19 +141,43 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextPrimary"
-        tools:text="12.02.2018"
         app:layout_constraintBottom_toBottomOf="@+id/created_hint_text_view"
         app:layout_constraintStart_toStartOf="@+id/language_text_view"
-        app:layout_constraintTop_toTopOf="@+id/created_hint_text_view"/>
+        app:layout_constraintTop_toTopOf="@+id/created_hint_text_view"
+        tools:text="12.02.2018"/>
 
     <TextView
         android:id="@+id/updated_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="@style/TextPrimary"
-        tools:text="14.02.2018"
         app:layout_constraintBottom_toBottomOf="@+id/updated_hint_text_view"
         app:layout_constraintStart_toStartOf="@+id/language_text_view"
-        app:layout_constraintTop_toTopOf="@+id/updated_hint_text_view"/>
+        app:layout_constraintTop_toTopOf="@+id/updated_hint_text_view"
+        tools:text="14.02.2018"/>
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:indeterminate="true"
+        app:layout_constraintEnd_toEndOf="@id/endGuideline"
+        app:layout_constraintStart_toStartOf="@id/startGuideline"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/startGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="16dp"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/endGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="16dp"/>
 
 </android.support.constraint.ConstraintLayout>
