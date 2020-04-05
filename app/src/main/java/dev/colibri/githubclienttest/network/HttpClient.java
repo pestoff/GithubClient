@@ -3,21 +3,24 @@ package dev.colibri.githubclienttest.network;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import dev.colibri.githubclienttest.entity.RepositoriesResponse;
 import dev.colibri.githubclienttest.entity.Repository;
 
 import retrofit2.Call;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
+@Singleton
 public class HttpClient {
-    private Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(GithubService.BASE_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
 
-    private GithubService githubService = retrofit.create(GithubService.class);
+    private GithubService githubService;
+
+    @Inject
+    public HttpClient(GithubService githubService) {
+        this.githubService = githubService;
+    }
 
     public Repository getRepository(String repoName, String userLogin) throws IOException {
         return getResponse(githubService.getRepository(userLogin, repoName));
