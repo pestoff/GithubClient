@@ -1,10 +1,13 @@
 package dev.colibri.githubclienttest.viewModel;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.arch.persistence.room.Insert;
 import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
@@ -16,7 +19,12 @@ public class RepoListViewModel extends ViewModel {
     private MutableLiveData<Boolean> isQueryValidationException = new MutableLiveData<>();
     private MutableLiveData<List<Repository>> repositories = new MutableLiveData<>();
 
-    private DataRepository dataRepository = App.getDataRepository();
+    private DataRepository dataRepository;
+
+    @Inject
+    public RepoListViewModel(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
     public MutableLiveData<Boolean> getIsLoading() {
         return isLoading;

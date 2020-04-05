@@ -15,11 +15,18 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import javax.inject.Inject;
+
 import dev.colibri.githubclienttest.R;
+import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.viewModel.RepoDetailsViewModel;
+import dev.colibri.githubclienttest.viewModelFactory.ViewModelFactory;
 
 public class RepoDetailsFragment extends Fragment {
+
+    @Inject
+    ViewModelFactory viewModelFactory;
 
     private static String mRepoName;
     private static String mUserLogin;
@@ -58,6 +65,8 @@ public class RepoDetailsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_repo_details, container, false);
 
+        App.getAppComponent().inject(this);
+
         initView(view);
         initViewModel();
 
@@ -67,7 +76,7 @@ public class RepoDetailsFragment extends Fragment {
     }
 
     private void initViewModel() {
-        viewModel = ViewModelProviders.of(this).get(RepoDetailsViewModel.class);
+        viewModel = ViewModelProviders.of(this, viewModelFactory).get(RepoDetailsViewModel.class);
 
         viewModel.getRepositoryMutableLiveData().observe(this, repository -> {
             display(repository);

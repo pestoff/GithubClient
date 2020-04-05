@@ -13,6 +13,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.inject.Inject;
+
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
@@ -20,11 +22,16 @@ import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoDetailsViewModel extends ViewModel {
 
-    private DataRepository dataRepository = App.getDataRepository();
+    private DataRepository dataRepository;
 
     private MutableLiveData<Repository> repositoryMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
+
+    @Inject
+    public RepoDetailsViewModel(DataRepository dataRepository) {
+        this.dataRepository = dataRepository;
+    }
 
     public MutableLiveData<Boolean> getIsLoading() {
         return isLoading;

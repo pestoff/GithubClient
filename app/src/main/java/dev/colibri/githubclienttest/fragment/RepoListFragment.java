@@ -19,6 +19,8 @@ import android.widget.Toast;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import dev.colibri.githubclienttest.R;
 import dev.colibri.githubclienttest.adapter.RepositoryAdapter;
 import dev.colibri.githubclienttest.app.App;
@@ -26,8 +28,12 @@ import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
 import dev.colibri.githubclienttest.repository.DataRepository;
 import dev.colibri.githubclienttest.viewModel.RepoListViewModel;
+import dev.colibri.githubclienttest.viewModelFactory.ViewModelFactory;
 
 public class RepoListFragment extends Fragment {
+
+    @Inject
+    ViewModelFactory viewModelFactory;
 
     private RepoListViewModel repoListViewModel;
 
@@ -48,6 +54,8 @@ public class RepoListFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_repo_list, container, false);
 
+        App.getAppComponent().inject(this);
+
         initRecyclerView(view);
         initViewModel();
 
@@ -57,7 +65,7 @@ public class RepoListFragment extends Fragment {
     }
 
     private void initViewModel() {
-        repoListViewModel = ViewModelProviders.of(this).get(RepoListViewModel.class);
+        repoListViewModel = ViewModelProviders.of(this, viewModelFactory).get(RepoListViewModel.class);
 
         repoListViewModel.getIsLoading().observe(this, isLoading -> {
             if (isLoading) {

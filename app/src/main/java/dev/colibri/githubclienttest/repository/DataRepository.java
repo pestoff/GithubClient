@@ -3,18 +3,21 @@ package dev.colibri.githubclienttest.repository;
 import java.io.IOException;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.database.RepositoryDao;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.network.HttpClient;
 
 public class DataRepository {
 
-    private RepositoryDao repositoryDao;
-    private HttpClient httpClient;
+    private RepositoryDao repositoryDao = App.getDatabase().getRepositoryDao();
+    private HttpClient httpClient = App.getHttpClient();
 
-    public DataRepository(RepositoryDao repositoryDao, HttpClient httpClient) {
-        this.repositoryDao = repositoryDao;
-        this.httpClient = httpClient;
+    @Inject
+    public DataRepository() {
+
     }
 
     public List<Repository> getRepositories(String query) throws IOException {
