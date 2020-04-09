@@ -3,6 +3,9 @@ package dev.colibri.githubclienttest.module;
 import android.arch.persistence.room.Room;
 import android.content.Context;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -54,6 +57,12 @@ public class AppModule {
     @Singleton
     public RepositoryDao provideRepositoryDao(AppDatabase appDatabase) {
         return appDatabase.getRepositoryDao();
+    }
+
+    @Provides
+    @Singleton
+    public Executor provideExecutor(){
+        return new ScheduledThreadPoolExecutor(5);
     }
 
 }

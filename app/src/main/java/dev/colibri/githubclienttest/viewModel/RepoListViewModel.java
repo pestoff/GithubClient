@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
@@ -20,10 +21,12 @@ public class RepoListViewModel extends ViewModel {
     private MutableLiveData<List<Repository>> repositories = new MutableLiveData<>();
 
     private DataRepository dataRepository;
+    private Executor executor;
 
     @Inject
-    public RepoListViewModel(DataRepository dataRepository) {
+    public RepoListViewModel(DataRepository dataRepository, Executor executor) {
         this.dataRepository = dataRepository;
+        this.executor = executor;
     }
 
     public MutableLiveData<Boolean> getIsLoading() {
@@ -46,36 +49,21 @@ public class RepoListViewModel extends ViewModel {
         if (query == null) {
             isQueryValidationException.setValue(true);
         } else {
-            new GetRepositoriesAsyncTask().execute(query);
-        }
-    }
+            executor.execute(() -> {
+                List<Repository> repositoryList = null;
 
-    public class GetRepositoriesAsyncTask extends AsyncTask<String, Void, List<Repository>> {
+                try {
+                    repositoryList = dataRepository.getRepositories(query);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
 
-        @Override
-        protected void onPreExecute() {
-            isLoading.setValue(true);
-        }
-
-        @Override
-        protected List<Repository> doInBackground(String... queries) {
-            try {
-                return dataRepository.getRepositories(queries[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(List<Repository> result) {
-            isLoading.setValue(false);
-
-            if (result != null) {
-                repositories.setValue(result);
-            } else {
-                isNetworkException.setValue(true);
-            }
+                if (repositoryList != null) {
+                    repositories.postValue(repositoryList);
+                } else {
+                    isNetworkException.postValue(true);
+                }
+            });
         }
     }
 }

@@ -12,25 +12,26 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.Executor;
 
 import javax.inject.Inject;
 
-import dev.colibri.githubclienttest.R;
-import dev.colibri.githubclienttest.app.App;
 import dev.colibri.githubclienttest.entity.Repository;
 import dev.colibri.githubclienttest.repository.DataRepository;
 
 public class RepoDetailsViewModel extends ViewModel {
 
     private DataRepository dataRepository;
+    private Executor executor;
 
     private MutableLiveData<Repository> repositoryMutableLiveData = new MutableLiveData<>();
     private MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
     private MutableLiveData<Boolean> isNetworkException = new MutableLiveData<>();
 
     @Inject
-    public RepoDetailsViewModel(DataRepository dataRepository) {
+    public RepoDetailsViewModel(DataRepository dataRepository, Executor executor) {
         this.dataRepository = dataRepository;
+        this.executor = executor;
     }
 
     public MutableLiveData<Boolean> getIsLoading() {
@@ -46,7 +47,25 @@ public class RepoDetailsViewModel extends ViewModel {
     }
 
     public void updateContent(String repoName, String userLogin) {
-        new GetRepositoryAsyncTask().execute(repoName, userLogin);
+        executor.execute(() -> {
+            Repository repository = null;
+
+            isLoading.postValue(true);
+
+            try {
+                repository = dataRepository.getRepository(repoName, userLogin);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(repository != null) {
+                repositoryMutableLiveData.postValue(repository);
+            } else {
+                isNetworkException.postValue(true);
+            }
+
+            isLoading.postValue(false);
+        });
     }
 
     public String getFormattedDate(String dateString) {
@@ -58,40 +77,6 @@ public class RepoDetailsViewModel extends ViewModel {
             return outputFormat.format(date);
         } catch (ParseException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private class GetRepositoryAsyncTask extends AsyncTask<String, Void, Repository> {
-
-        @Override
-        protected void onPreExecute() {
-            isLoading.setValue(true);
-        }
-
-        @Override
-        protected Repository doInBackground(String... params) {
-            String repoName = params[0];
-            String userLogin = params[1];
-
-            try {
-                return dataRepository.getRepository(repoName, userLogin);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-        }
-
-        @Override
-        protected void onPostExecute(Repository repository) {
-
-            isLoading.setValue(false);
-
-            if(repository != null) {
-                repositoryMutableLiveData.setValue(repository);
-            } else {
-                isNetworkException.setValue(true);
-            }
         }
     }
 }
